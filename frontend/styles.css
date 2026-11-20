@@ -1,0 +1,181 @@
+/* ---- Paleta y medidas comunes (variables reutilizables) ---- */
+:root {
+  --azul: #2563eb;
+  --azul-oscuro: #1e3a8a;
+  --fondo: #eef2f7;
+  --texto: #1f2937;
+  --texto-suave: #6b7280;
+  --borde: #e5e7eb;
+  --radio: 12px;
+  --sombra: 0 4px 16px rgba(30, 58, 138, 0.08);
+}
+
+/* ---- Base: tipografía y fondo de la página ---- */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.5;
+}
+
+/* ---- Cabecera: el rótulo de la tienda ---- */
+header {
+  background: linear-gradient(135deg, var(--azul-oscuro), var(--azul));
+  color: white;
+  padding: 2.5rem 1rem;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+header h1 { margin: 0 0 0.35rem; font-size: clamp(1.5rem, 4vw, 2.2rem); letter-spacing: -0.02em; }
+header p {
+  display: inline-block;
+  margin: 0;
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  font-size: 0.85rem;
+}
+
+/* ---- Contenedor principal ---- */
+main {
+  max-width: 1000px;
+  margin: -1.25rem auto 2rem;
+  padding: 0 1rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* ---- Tarjetas: cajas blancas del formulario y del listado ---- */
+.tarjeta {
+  background: white;
+  border-radius: var(--radio);
+  padding: 1.5rem;
+  box-shadow: var(--sombra);
+}
+.tarjeta h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.contador {
+  font-size: 0.8rem;
+  background: var(--azul);
+  color: white;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+}
+
+/* ---- Formulario: dos columnas (una en pantallas estrechas) ---- */
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+}
+.ancho-completo { grid-column: 1 / -1; }
+@media (max-width: 600px) {
+  form { grid-template-columns: 1fr; }
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #374151;
+}
+input, select, textarea {
+  font: inherit;
+  font-weight: normal;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--azul);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+textarea { resize: vertical; }
+
+/* ---- Botones ---- */
+.acciones { display: flex; gap: 0.75rem; }
+button {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--azul);
+  color: white;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+button:hover { background: #1d4ed8; }
+button:active { transform: scale(0.97); }
+button.secundario { background: var(--borde); color: var(--texto); }
+button.secundario:hover { background: #d1d5db; }
+
+/* ---- Avisos (guardado correcto o error) ---- */
+.mensaje {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.mensaje-ok { background: #dcfce7; color: #166534; border-left: 4px solid #16a34a; }
+.mensaje-error { background: #fee2e2; color: #991b1b; border-left: 4px solid #dc2626; }
+
+/* ---- Tabla del listado ---- */
+.tabla-contenedor { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+th, td {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--borde);
+  vertical-align: top;
+}
+th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texto-suave);
+  background: #f9fafb;
+}
+tbody tr { transition: background 0.15s; }
+tbody tr:hover { background: #f5f8ff; }
+td small { display: block; color: var(--texto-suave); }
+.numero { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pendiente { color: #9ca3af; }
+.vacio { text-align: center; color: var(--texto-suave); font-style: italic; padding: 2rem; }
+
+/* ---- Etiquetas de categoría y stock ---- */
+.etiqueta {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #e0e7ff;
+  color: #3730a3;
+}
+.etiqueta-portatil   { background: #dbeafe; color: #1e40af; }
+.etiqueta-sobremesa  { background: #e0e7ff; color: #3730a3; }
+.etiqueta-movil      { background: #fce7f3; color: #9d174d; }
+.etiqueta-tablet     { background: #f3e8ff; color: #6b21a8; }
+.etiqueta-monitor    { background: #cffafe; color: #155e75; }
+.etiqueta-periferico { background: #fef3c7; color: #92400e; }
+.etiqueta-audio      { background: #dcfce7; color: #166534; }
+.etiqueta-otro       { background: #f3f4f6; color: #374151; }
+
+.stock-ok      { background: #dcfce7; color: #166534; }
+.stock-bajo    { background: #ffedd5; color: #9a3412; }
+.stock-agotado { background: #fee2e2; color: #991b1b; }

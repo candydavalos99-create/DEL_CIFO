@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de productos tecnológicos</title>
+  <!-- Enlaza la hoja de estilos: el "aspecto" de la página -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Cabecera: el rótulo de la tienda -->
+  <header>
+    <h1>Catálogo de productos tecnológicos</h1>
+    <p>Fase 1 · Solo frontend (los datos viven en el navegador)</p>
+  </header>
+
+  <main>
+    <!-- Formulario: el "mostrador" donde se dan de alta o se editan productos -->
+    <section class="tarjeta">
+      <h2>Nuevo producto</h2>
+      <form id="form-producto">
+        <label>Nombre *
+          <input type="text" name="nombre" required minlength="2" maxlength="100">
+        </label>
+
+        <label>Marca *
+          <input type="text" name="marca" required placeholder="Apple, Lenovo, Logitech...">
+        </label>
+
+        <label>Categoría *
+          <select name="categoria" required>
+            <option value="">-- Elige una --</option>
+            <option value="portatil">Portátil</option>
+            <option value="sobremesa">Sobremesa</option>
+            <option value="movil">Móvil</option>
+            <option value="tablet">Tablet</option>
+            <option value="monitor">Monitor</option>
+            <option value="periferico">Periférico</option>
+            <option value="audio">Audio</option>
+            <option value="otro">Otro</option>
+          </select>
+        </label>
+
+        <label>Precio (€) *
+          <input type="number" name="precio" required min="0" step="0.01">
+        </label>
+
+        <label>Stock
+          <input type="number" name="stock" min="0" step="1" value="0">
+        </label>
+
+        <label class="ancho-completo">Descripción
+          <textarea name="descripcion" maxlength="500" rows="3"></textarea>
+        </label>
+
+        <div class="acciones ancho-completo">
+          <button type="submit">Guardar</button>
+          <button type="reset" class="secundario">Limpiar</button>
+        </div>
+      </form>
+      <!-- Zona de avisos: app.js muestra aquí si se ha guardado o qué falta -->
+      <p id="mensaje" class="mensaje" hidden></p>
+    </section>
+
+    <!-- Listado: el "escaparate" donde se ven todos los productos -->
+    <section class="tarjeta">
+      <h2>Productos <span id="contador" class="contador">0</span></h2>
+      <div class="tabla-contenedor">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Marca</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <!-- Aquí app.js (siguiente paso) pintará las filas de productos -->
+          <tbody id="lista-productos">
+            <tr>
+              <td colspan="6" class="vacio">Todavía no hay productos.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Carga el comportamiento de la página (va al final para que el HTML ya exista) -->
+  <script src="app.js"></script>
+</body>
+</html>
