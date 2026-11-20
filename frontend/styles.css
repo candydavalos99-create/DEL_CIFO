@@ -179,3 +179,11 @@ td small { display: block; color: var(--texto-suave); }
 .stock-ok      { background: #dcfce7; color: #166534; }
 .stock-bajo    { background: #ffedd5; color: #9a3412; }
 .stock-agotado { background: #fee2e2; color: #991b1b; }
+
+/* ---- Botones pequeños de cada fila (editar / borrar) ---- */
+.botones-fila { white-space: nowrap; }
+button.mini { padding: 0.3rem 0.7rem; font-size: 0.8rem; margin-right: 0.3rem; }
+button.mini.editar { background: #e0e7ff; color: #3730a3; }
+button.mini.editar:hover { background: #c7d2fe; }
+button.mini.borrar { background: #fee2e2; color: #991b1b; }
+button.mini.borrar:hover { background: #fecaca; }

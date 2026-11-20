@@ -11,13 +11,13 @@
   <!-- Cabecera: el rótulo de la tienda -->
   <header>
     <h1>Catálogo de productos tecnológicos</h1>
-    <p>Fase 1 · Solo frontend (los datos viven en el navegador)</p>
+    <p>Fase 2 · Frontend + backend (los datos viven en la memoria del servidor)</p>
   </header>
 
   <main>
     <!-- Formulario: el "mostrador" donde se dan de alta o se editan productos -->
     <section class="tarjeta">
-      <h2>Nuevo producto</h2>
+      <h2 id="titulo-form">Nuevo producto</h2>
       <form id="form-producto">
         <label>Nombre *
           <input type="text" name="nombre" required minlength="2" maxlength="100">
@@ -54,8 +54,8 @@
         </label>
 
         <div class="acciones ancho-completo">
-          <button type="submit">Guardar</button>
-          <button type="reset" class="secundario">Limpiar</button>
+          <button type="submit" id="btn-guardar">Guardar</button>
+          <button type="reset" class="secundario" id="btn-cancelar">Limpiar</button>
         </div>
       </form>
       <!-- Zona de avisos: app.js muestra aquí si se ha guardado o qué falta -->
