@@ -1,0 +1,103 @@
+/* ---- Cabecera del escaparate ---- */
+.cabecera-tienda {
+  background: linear-gradient(135deg, #0f172a, #4338ca 60%, #7c3aed);
+  padding-bottom: 3rem;
+}
+
+/* ---- Contenedor de la tienda ---- */
+main.tienda {
+  max-width: 1100px;
+  margin-top: -2rem;
+  gap: 1rem;
+}
+
+/* ---- Filtros ---- */
+.filtros {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 700px) {
+  .filtros { grid-template-columns: 1fr; }
+}
+.resumen { margin: 0; color: var(--texto-suave); font-size: 0.9rem; }
+
+/* ---- Rejilla de tarjetas ---- */
+.rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.25rem;
+}
+
+/* ---- Tarjeta de producto ---- */
+.producto {
+  background: white;
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.producto:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(30, 58, 138, 0.15);
+}
+
+/* Zona de "foto": icono según la categoría sobre un degradado */
+.producto .foto {
+  height: 140px;
+  display: grid;
+  place-items: center;
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  position: relative;
+}
+.producto .foto .etiqueta { position: absolute; top: 0.75rem; left: 0.75rem; }
+.foto.cat-portatil   { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+.foto.cat-sobremesa  { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); }
+.foto.cat-movil      { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+.foto.cat-tablet     { background: linear-gradient(135deg, #f3e8ff, #e9d5ff); }
+.foto.cat-monitor    { background: linear-gradient(135deg, #cffafe, #a5f3fc); }
+.foto.cat-periferico { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+.foto.cat-audio      { background: linear-gradient(135deg, #dcfce7, #bbf7d0); }
+.foto.cat-otro       { background: linear-gradient(135deg, #f3f4f6, #e5e7eb); }
+
+.producto .info {
+  padding: 1rem 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+.producto .marca {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texto-suave);
+}
+.producto h3 { margin: 0; font-size: 1.05rem; line-height: 1.3; }
+.producto .descripcion { margin: 0; font-size: 0.85rem; color: var(--texto-suave); }
+.producto .pie {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* si el precio es muy largo, la etiqueta baja de línea */
+  gap: 0.5rem;
+}
+.producto .precio { font-size: 1.35rem; font-weight: 800; color: var(--azul-oscuro); }
+
+/* Producto agotado: se ve más apagado */
+.producto.agotado .foto { filter: grayscale(0.8); opacity: 0.7; }
+.producto.agotado .precio { color: var(--texto-suave); }
+
+/* Estado vacío (sin resultados) */
+.sin-resultados {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--texto-suave);
+  padding: 3rem 1rem;
+}

@@ -4,8 +4,8 @@
 // con fetch. El navegador solo muestra lo que el servidor le devuelve.
 // =====================================================================
 
-// ---- Dirección de la API (el backend escucha en el puerto 3000) ----
-const API = 'http://localhost:3000/productos';
+// ---- Dirección de la API: viene de config.js (local: puerto 3000; Render: URL pública) ----
+const API = `${window.API_URL || 'http://localhost:3000'}/productos`;
 
 // Copia local de lo último que nos ha enviado el servidor (solo para pintar)
 let productos = [];
@@ -35,7 +35,7 @@ async function pedir(url, opciones = {}) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch {
-    throw new Error('No se puede conectar con el servidor. ¿Está arrancado el backend en el puerto 3000? ¿Permite CORS desde esta web? (Mira la consola del navegador).');
+    throw new Error(`No se puede conectar con el servidor (${API}). ¿Está arrancado el backend? ¿Permite CORS desde esta web? (Mira la consola del navegador).`);
   }
   const datos = await respuesta.json();
   if (!respuesta.ok) {
@@ -47,6 +47,8 @@ async function pedir(url, opciones = {}) {
 
 // GET /productos → recarga la lista desde el servidor y la pinta
 async function cargarProductos() {
+  // El servidor gratuito de Render "se duerme" y tarda ~1 minuto en despertar
+  if (productos.length === 0) lista.innerHTML = '<tr><td colspan="6" class="vacio">Cargando productos… (si el servidor estaba dormido, puede tardar hasta 1 minuto)</td></tr>';
   try {
     productos = await pedir(API);
     pintarLista();

@@ -187,3 +187,23 @@ button.mini.editar { background: #e0e7ff; color: #3730a3; }
 button.mini.editar:hover { background: #c7d2fe; }
 button.mini.borrar { background: #fee2e2; color: #991b1b; }
 button.mini.borrar:hover { background: #fecaca; }
+
+/* ---- Navegación entre tienda y panel ---- */
+.navegacion {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.navegacion a {
+  color: white;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.navegacion a:hover { background: rgba(255, 255, 255, 0.15); }
+.navegacion a.activo { background: white; color: var(--azul-oscuro); }

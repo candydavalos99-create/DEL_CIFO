@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda · Catálogo de productos tecnológicos</title>
+  <!-- Reutiliza los colores y estilos base del panel, y añade los de la tienda -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="tienda.css">
+</head>
+<body>
+  <!-- Cabecera del escaparate: lo primero que ve el cliente -->
+  <header class="cabecera-tienda">
+    <h1>Tienda de tecnología</h1>
+    <p>Escaparate para el cliente · mismos datos que el panel de gestión</p>
+    <nav class="navegacion">
+      <a href="tienda.html" class="activo">Tienda</a>
+      <a href="index.html">Panel de gestión</a>
+    </nav>
+  </header>
+
+  <main class="tienda">
+    <!-- Barra de búsqueda y filtros (solo cambian lo que se muestra, no los datos) -->
+    <section class="filtros tarjeta">
+      <label>Buscar
+        <input type="search" id="buscar" placeholder="Nombre, marca o descripción...">
+      </label>
+      <label>Categoría
+        <select id="filtro-categoria">
+          <option value="">Todas</option>
+          <option value="portatil">Portátiles</option>
+          <option value="sobremesa">Sobremesa</option>
+          <option value="movil">Móviles</option>
+          <option value="tablet">Tablets</option>
+          <option value="monitor">Monitores</option>
+          <option value="periferico">Periféricos</option>
+          <option value="audio">Audio</option>
+          <option value="otro">Otros</option>
+        </select>
+      </label>
+      <label>Ordenar
+        <select id="orden">
+          <option value="novedades">Novedades</option>
+          <option value="precio-asc">Precio: de menor a mayor</option>
+          <option value="precio-desc">Precio: de mayor a menor</option>
+          <option value="nombre">Nombre (A-Z)</option>
+        </select>
+      </label>
+    </section>
+
+    <!-- Resumen de resultados y avisos -->
+    <p id="resumen" class="resumen"></p>
+    <p id="mensaje" class="mensaje" hidden></p>
+
+    <!-- Rejilla de productos: tienda.js crea aquí una tarjeta por producto -->
+    <section id="rejilla" class="rejilla"></section>
+  </main>
+
+  <!-- config.js: dirección de la API (local o Render) -->
+  <script src="config.js"></script>
+  <script src="tienda.js"></script>
+</body>
+</html>

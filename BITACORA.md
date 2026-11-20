@@ -11,9 +11,12 @@ Se actualiza al terminar cada paso. Las reglas generales del proyecto están en 
 - **Hecho:** CRUD completo con los datos guardados en MongoDB (BD `catalogo`, colección `productos`). Los datos **se mantienen** al reiniciar todo.
 - **Validación:** DTOs + `class-validator` (petición) y esquema de Mongoose (base de datos).
 - **Git:** commit "fase 3" subido a GitHub.
+- **Extra (fuera de las 3 fases):** escaparate para el cliente en `frontend/tienda.html`, con la misma API y solo lectura.
+- **Despliegue en Render:** archivos y guía preparados (`DESPLIEGUE.md`, `.github/workflows/deploy.yml`). ✅ **MongoDB Atlas listo** (Project 0 · Cluster0 M0 · Frankfurt). Credenciales en `~/mongodb/atlas-credenciales.txt` (privado, fuera del proyecto). **Falta:** commit y push, Render y los secretos de GitHub.
 - **Pendiente:** nada por decidir. Todo subido a GitHub (último commit: "limpieza final").
 - **Repositorio en GitHub:** https://github.com/candydavalos99-create/DEL_CIFO (para subir cambios: `git push`)
-- **Cómo ver la web:** arrancar las tres piezas (ver abajo) y abrir http://localhost:8080
+- **Cómo ver la web:** arrancar las tres piezas (ver abajo). Panel de gestión: http://localhost:8080 · Tienda para el cliente: http://localhost:8080/tienda.html
+- **Ver MongoDB:** doble clic en `~/mongodb/ver-catalogo-en-vivo.command` (se actualiza solo) o en `~/mongodb/ver-catalogo.command` (a mano, con `ver()`)
 
 ### Cómo arrancarlo (tres terminales, en este orden)
 
@@ -41,6 +44,11 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
 | `.gitignore` | Archivos que Git debe ignorar (`.DS_Store`, `node_modules/`, `dist/`, `*.tsbuildinfo`) |
 | `frontend/index.html` | Estructura: cabecera, formulario, zona de avisos, tabla del listado |
 | `frontend/styles.css` | Aspecto: degradado, tarjetas, etiquetas de color, botones de fila |
+| `frontend/tienda.html` · `tienda.css` · `tienda.js` | Escaparate para el cliente: tarjetas, buscador, filtro por categoría y orden. Solo `GET /productos` |
+| `frontend/config.js` | Dirección de la API: `http://localhost:3000` en local; en Render lo reescribe `generar-config.sh` con `API_URL` |
+| `frontend/generar-config.sh` | Build Command del Static Site de Render: genera `config.js` con la URL del backend |
+| `DESPLIEGUE.md` | Guía paso a paso para publicar en Render + MongoDB Atlas con GitHub Actions |
+| `.github/workflows/deploy.yml` | GitHub Actions: compila el backend, revisa el JS del frontend y, si todo va bien, llama a los Deploy Hooks de Render |
 | `frontend/app.js` | Comportamiento: pide los datos a la API con `fetch` (GET, POST, PATCH, DELETE) y los pinta |
 | `backend/` | Proyecto NestJS generado con Nest CLI 12 |
 | `backend/src/main.ts` | Punto de arranque: CORS, validación global (`ValidationPipe`) y puerto 3000 |
@@ -51,7 +59,7 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
 | `backend/src/productos/categorias.ts` | Categorías válidas (las usan los DTOs y el esquema) |
 | `backend/src/productos/schemas/producto.schema.ts` | Esquema de Mongoose: la "plantilla de ficha" de cada producto en MongoDB (`timestamps`, `id` en vez de `_id`) |
 | `backend/src/app.module.ts` | Conexión con MongoDB (`mongodb://127.0.0.1:27017/catalogo`) |
-| `~/mongodb/` (fuera del proyecto) | MongoDB 9.0.8 (`bin/`) y sus datos (`data/`) |
+| `~/mongodb/` (fuera del proyecto) | MongoDB 9.0.8 (`bin/`), sus datos (`data/`) y los lanzadores `ver-catalogo.command` y `ver-catalogo-en-vivo.command` |
 
 ---
 
@@ -99,6 +107,24 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
 | 2026-11-20 | Commit "fase 3" y push a GitHub | Incluido en el plan aprobado por la usuaria |
 | 2026-11-20 | Se **borran** las skills de Nest (`backend/.claude/`, `backend/.agents/`, `backend/AGENTS.md`) y sus líneas del `.gitignore` | La usuaria pidió borrarlas si no hacían falta: son guías para asistentes de IA, la app no las usa y se pueden reinstalar con `npx @nestjs/skills add` |
 | 2026-11-20 | La cabecera de la web pasa a "Fase 3 · Frontend + backend + MongoDB" | Petición de la usuaria, una vez demostrado que el frontend funcionaba sin tocarlo |
+| 2026-11-20 | Lanzadores de `mongosh` en `~/mongodb` (fuera del proyecto): `ver-catalogo.command` (atajo `ver()`) y `ver-catalogo-en-vivo.command` | La usuaria quería ver en MongoDB lo que añade en la web |
+| 2026-11-20 | El monitor en vivo redibuja cada 2 s con un reloj ("Comprobado a las…") y "Último cambio" | La primera versión solo redibujaba al detectar cambios y la usuaria vio que "dejó de actualizarse"; con el reloj se sabe si sigue vivo |
+| 2026-11-20 | Se añade un **escaparate para el cliente** (`tienda.html`), aparte del panel de gestión | Para entender la diferencia entre lo que ve el cliente y el back-office. Es un extra fuera de las 3 fases, pedido por la usuaria |
+| 2026-11-20 | Sin fotos (la subida de imágenes está fuera de alcance): icono y color según la categoría | Respetar el alcance de `CLAUDE.md` |
+| 2026-11-20 | Navegación "Tienda / Panel de gestión" en las dos páginas | Pasar de una vista a otra |
+| 2026-11-20 | **Despliegue en Render** (plan gratuito), aunque `CLAUDE.md` lo dejaba fuera de alcance | Petición de la usuaria |
+| 2026-11-20 | Base de datos en **MongoDB Atlas M0** (gratis), aunque `CLAUDE.md` excluía Atlas | Render no ofrece MongoDB y su plan gratuito no tiene disco permanente; en local se sigue usando MongoDB local |
+| 2026-11-20 | Despliegue con **GitHub Actions + Deploy Hooks** de Render; auto-deploy de Render apagado | Petición de la usuaria: GitHub Actions comprueba (compila backend, revisa JS) y solo despliega si todo va bien |
+| 2026-11-20 | Si faltan los secretos de los Deploy Hooks, el workflow avisa (amarillo) y no despliega, en vez de fallar | El primer push ocurre antes de crear los servicios en Render |
+| 2026-11-20 | Servicios creados a mano en el panel de Render (sin `render.yaml`) | Más fácil de seguir; la documentación de Render no garantiza que el sitio estático pueda leer la URL pública del backend desde el Blueprint |
+| 2026-11-20 | Configuración por **variables de entorno**: `MONGODB_URI`, `CORS_ORIGIN` (admite varias, separadas por comas) y `PORT` en el backend; `API_URL` → `config.js` en el frontend. Los valores por defecto son los de local | No escribir secretos ni direcciones de producción en el código |
+| 2026-11-20 | Node 24 en GitHub Actions (el que usa Render por defecto) y `engines: node >=20.19` en `backend/package.json` | Nest 12 pide ≥ 20, Mongoose 9 pide ≥ 20.19 |
+| 2026-11-20 | Mensaje "Cargando productos… (puede tardar hasta 1 minuto)" en el panel y en la tienda | El backend gratuito se duerme tras 15 min y tarda ~1 min en despertar |
+| 2026-11-20 | Aviso en la guía: el panel de gestión no tiene inicio de sesión | Una vez publicado, cualquiera con la dirección podría editar o borrar |
+| 2026-11-20 | Atlas se configura con la **Atlas CLI** oficial (1.59.1, huella verificada, en `~/mongodb/bin/atlas`); la usuaria aprueba el acceso en el navegador con un código | La usuaria pidió que lo hiciera yo; así no tiene que dar su contraseña |
+| 2026-11-20 | Se usa el proyecto existente **"Project 0"** (estaba vacío) en vez de crear uno nuevo | Cuenta recién creada, sin nada más |
+| 2026-11-20 | Usuario `catalogo_app` (readWriteAnyDatabase) con contraseña aleatoria guardada en `~/mongodb/atlas-credenciales.txt` (permisos 600); nunca se muestra en el chat | No exponer secretos |
+| 2026-11-20 | Acceso de red `0.0.0.0/0` | Render gratuito no tiene IP fija |
 
 ---
 
@@ -162,6 +188,30 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
 
 ---
 
+### 2026-11-20 · Sesión 2 (continuación)
+
+25. **Ver MongoDB:** la usuaria quiere ver en la base de datos lo que añade en la web. Se crea `~/mongodb/ver-catalogo.command` (consola con el atajo `ver()`) y se abre en su pantalla. Se ve su producto nuevo ("Laptop") ✅.
+26. **Monitor en vivo:** `~/mongodb/ver-catalogo-en-vivo.command` actualiza la tabla sola. La usuaria indica que "dejó de actualizarse": el proceso seguía vivo y los datos llegaban a MongoDB, pero no se podía saber si estaba esperando o colgado. Nueva versión con reloj cada 2 s ✅ (probada detectando un producto de prueba, que después se borra).
+27. **¿Qué ve el usuario?** Se explica la diferencia entre el frontend (lo que ve la persona), el backend (sin pantalla) y la consola de MongoDB (solo para la desarrolladora). Lo que hemos hecho es el **panel de gestión** (back-office) de la tienda.
+28. **Escaparate para el cliente:** `frontend/tienda.html`, `tienda.css` y `tienda.js`. Tarjetas con icono por categoría, buscador, filtro, orden y disponibilidad ("En stock", "¡Últimas N!", "Agotado"). Sin botones de editar ni borrar. Probado en Chrome (búsqueda, filtro, orden y "sin resultados") y revisado con capturas de escritorio y de móvil ✅. Corregidos: icono de tablet y etiqueta de stock pegada al borde con precios largos. **Pendiente de commit.**
+
+---
+
+29. **Preparar el despliegue en Render con GitHub Actions:**
+    - Documentación de Render consultada: el servidor gratuito se duerme a los 15 min y tarda ~1 min en despertar; 750 h/mes; sin disco permanente; Node 24 por defecto.
+    - Backend: `MONGODB_URI` y `CORS_ORIGIN` por variables de entorno. Compilado y arrancado en **modo producción** (`node dist/main`, puerto 3100): health check 200, 11 productos, CORS acepta el origen de Render y bloquea otra web ✅.
+    - Frontend: `config.js` + `generar-config.sh` (probado con y sin `API_URL`) ✅. Panel y tienda siguen funcionando en local ✅.
+    - `.github/workflows/deploy.yml`: YAML validado ✅ (todavía no se ha ejecutado en GitHub).
+    - `DESPLIEGUE.md`: guía en 7 pasos (Atlas → backend → frontend → CORS → Deploy Hooks → primer despliegue → comprobación), con limitaciones, problemas frecuentes y seguridad.
+    - **Pendiente:** commit y push, y los pasos que solo puede hacer la usuaria (cuentas, contraseñas y secretos).
+30. **MongoDB Atlas (paso 1 de la guía), hecho por mí con la Atlas CLI:**
+    - El primer intento de descargar la CLI lo bloqueó el sistema de permisos; la usuaria lo autorizó pegando el comando.
+    - Inicio de sesión con código de un solo uso, aprobado por la usuaria en el navegador.
+    - Cluster0 (M0, AWS Frankfurt) creado; usuario `catalogo_app`; acceso `0.0.0.0/0`; dirección de conexión con `/catalogo` guardada en el archivo privado.
+    - Probado: `ping: 1` ✅ y backend en modo producción contra Atlas → crea los 3 productos de ejemplo ✅.
+
+---
+
 ## Ideas clave aprendidas
 
 - **Frontend** = escaparate y mostrador: lo que el cliente ve y usa en el navegador.
@@ -181,4 +231,7 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
 - **`mongod`** = el servidor de MongoDB (puerto 27017). **`mongosh`** = la consola para mirar dentro del almacén.
 - **Mongoose / ODM** = el traductor entre NestJS (objetos de JavaScript) y MongoDB (documentos). **Esquema** = la plantilla de ficha de cada producto en el almacén. **Modelo** = la herramienta para buscar, crear, modificar y borrar en una colección.
 - **Idea clave de la fase 3:** la API (rutas y JSON) **no ha cambiado**. Solo ha cambiado dónde guarda los datos el servicio. Por eso el frontend ha funcionado sin tocar ni una línea.
+- **Desplegar** = publicar en un servidor de internet. **Variable de entorno** = configuración que se da desde fuera del código (la etiqueta con la dirección del almacén para cada sucursal). **Secreto** = variable que no debe verse nunca (nunca va a GitHub).
+- **GitHub Actions** = la cadena de montaje automática: en cada push comprueba el código y, si está bien, avisa a Render con un **Deploy Hook** (el timbre que dice "hay mercancía nueva, publica").
+- **Una misma API, varias pantallas:** el panel de gestión (personal) y la tienda (cliente) usan el mismo backend y la misma base de datos. Lo que el personal da de alta aparece en el escaparate, sin duplicar datos.
 - **Resultado de la fase 3:** los datos se mantienen al recargar la página, al reiniciar el backend y al reiniciar MongoDB.

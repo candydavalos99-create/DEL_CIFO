@@ -1,0 +1,93 @@
+# GitHub Actions: la "cadena de montaje" automática.
+# En cada push a main:
+#   1) comprueba que el backend compila y que el JavaScript del frontend no tiene errores;
+#   2) solo si todo está bien, avisa a Render (Deploy Hooks) para que despliegue.
+# También se puede lanzar a mano desde la pestaña "Actions" de GitHub (workflow_dispatch).
+
+name: Comprobar y desplegar en Render
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Si llegan dos push seguidos, el despliegue antiguo se cancela y queda el más reciente
+concurrency:
+  group: despliegue-render
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend · instalar y compilar
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Preparar Node 24 (la misma versión que usa Render por defecto)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Instalar dependencias (exactas, según package-lock.json)
+        run: npm ci
+
+      - name: Compilar (TypeScript → JavaScript en dist/)
+        run: npm run build
+
+  frontend:
+    name: Frontend · revisar el JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Preparar Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Comprobar que los .js no tienen errores de sintaxis
+        run: for f in frontend/*.js; do echo "→ $f"; node --check "$f"; done
+
+      - name: Comprobar que el script de configuración funciona
+        working-directory: frontend
+        env:
+          API_URL: https://ejemplo-backend.onrender.com/
+        run: |
+          cp config.js /tmp/config.original.js
+          sh generar-config.sh
+          grep -q "https://ejemplo-backend.onrender.com'" config.js
+          cp /tmp/config.original.js config.js
+
+  desplegar:
+    name: Desplegar en Render
+    needs: [backend, frontend]   # solo si las dos comprobaciones han ido bien
+    runs-on: ubuntu-latest
+    steps:
+      - name: Desplegar el backend (Deploy Hook)
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::warning::No se despliega el backend: falta el secreto RENDER_DEPLOY_HOOK_BACKEND (ver DESPLIEGUE.md, paso 5)."
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK" > /dev/null
+          echo "Render ha recibido la orden de desplegar el backend."
+
+      - name: Desplegar el frontend (Deploy Hook)
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::warning::No se despliega el frontend: falta el secreto RENDER_DEPLOY_HOOK_FRONTEND (ver DESPLIEGUE.md, paso 5)."
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK" > /dev/null
+          echo "Render ha recibido la orden de desplegar el frontend."

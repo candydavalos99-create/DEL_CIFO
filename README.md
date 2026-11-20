@@ -57,7 +57,27 @@ cd frontend
 python3 -m http.server 8080
 ```
 
-Abrir http://localhost:8080 en el navegador. Para parar cualquiera de las tres piezas: `Ctrl + C` en su terminal.
+Hay **dos páginas**, conectadas a la misma API:
+
+| Página | Para quién | Qué permite |
+|---|---|---|
+| http://localhost:8080/tienda.html | **El cliente** (escaparate) | Ver los productos en tarjetas, buscar, filtrar por categoría y ordenar. Solo lectura (`GET`) |
+| http://localhost:8080 (`index.html`) | **El personal** (panel de gestión) | Crear, editar y borrar productos |
+
+Para parar cualquiera de las tres piezas: `Ctrl + C` en su terminal.
+
+## Publicar en internet (Render)
+
+La guía paso a paso está en **[DESPLIEGUE.md](DESPLIEGUE.md)**: MongoDB Atlas (gratis) + backend y frontend en Render (plan gratuito), con despliegue automático mediante **GitHub Actions** (`.github/workflows/deploy.yml`).
+
+Variables de entorno que usa la aplicación (en local no hace falta ninguna: se usan los valores por defecto):
+
+| Pieza | Variable | Valor por defecto (local) | En Render |
+|---|---|---|---|
+| Backend | `MONGODB_URI` | `mongodb://127.0.0.1:27017/catalogo` | Dirección de MongoDB Atlas (secreta) |
+| Backend | `CORS_ORIGIN` | `http://localhost:8080` | Dirección del frontend publicado |
+| Backend | `PORT` | `3000` | La pone Render |
+| Frontend | `API_URL` (genera `config.js`) | `http://localhost:3000` | Dirección del backend publicado |
 
 ## API REST
 
