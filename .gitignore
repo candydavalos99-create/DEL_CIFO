@@ -2,8 +2,3 @@
 node_modules/
 dist/
 *.tsbuildinfo
-
-# Skills para asistentes de IA que instaló Nest CLI (no forman parte del proyecto)
-backend/.claude/
-backend/.agents/
-backend/AGENTS.md

@@ -11,9 +11,7 @@ Se actualiza al terminar cada paso. Las reglas generales del proyecto están en 
 - **Hecho:** CRUD completo con los datos guardados en MongoDB (BD `catalogo`, colección `productos`). Los datos **se mantienen** al reiniciar todo.
 - **Validación:** DTOs + `class-validator` (petición) y esquema de Mongoose (base de datos).
 - **Git:** commit "fase 3" subido a GitHub.
-- **Pendiente de decidir:**
-  1. Las skills que instaló Nest en `backend/` (`.claude/`, `.agents/`, `AGENTS.md`): ¿se borran? Por ahora siguen en disco, pero fuera de Git.
-  2. La cabecera de la web todavía dice "Fase 2 · ... memoria del servidor". No se ha cambiado para demostrar que el frontend funciona sin tocarlo. ¿Se actualiza el texto?
+- **Pendiente:** nada por decidir. Todo subido a GitHub (último commit: "limpieza final").
 - **Repositorio en GitHub:** https://github.com/candydavalos99-create/DEL_CIFO (para subir cambios: `git push`)
 - **Cómo ver la web:** arrancar las tres piezas (ver abajo) y abrir http://localhost:8080
 
@@ -40,7 +38,7 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
 | `CLAUDE.md` | Reglas, fases y modelo de datos del proyecto |
 | `BITACORA.md` | Este registro |
 | `README.md` | Cómo arrancar cada pieza, la API y las limitaciones por fase |
-| `.gitignore` | Archivos que Git debe ignorar (`.DS_Store`, `node_modules/`, `dist/`, skills de Nest) |
+| `.gitignore` | Archivos que Git debe ignorar (`.DS_Store`, `node_modules/`, `dist/`, `*.tsbuildinfo`) |
 | `frontend/index.html` | Estructura: cabecera, formulario, zona de avisos, tabla del listado |
 | `frontend/styles.css` | Aspecto: degradado, tarjetas, etiquetas de color, botones de fila |
 | `frontend/app.js` | Comportamiento: pide los datos a la API con `fetch` (GET, POST, PATCH, DELETE) y los pinta |
@@ -99,6 +97,8 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
 | 2026-11-20 | Un id con formato no válido (por ejemplo `99`) responde 404, no 500 | Mismo comportamiento que en la fase 2 |
 | 2026-11-20 | Si la colección está vacía al arrancar, se insertan los 3 productos de ejemplo | Continuidad con las fases 1 y 2 |
 | 2026-11-20 | Commit "fase 3" y push a GitHub | Incluido en el plan aprobado por la usuaria |
+| 2026-11-20 | Se **borran** las skills de Nest (`backend/.claude/`, `backend/.agents/`, `backend/AGENTS.md`) y sus líneas del `.gitignore` | La usuaria pidió borrarlas si no hacían falta: son guías para asistentes de IA, la app no las usa y se pueden reinstalar con `npx @nestjs/skills add` |
+| 2026-11-20 | La cabecera de la web pasa a "Fase 3 · Frontend + backend + MongoDB" | Petición de la usuaria, una vez demostrado que el frontend funcionaba sin tocarlo |
 
 ---
 
@@ -157,7 +157,8 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
 20. **Fase 3 · paso 3:** esquema `Producto` (`schemas/producto.schema.ts`) y servicio reescrito con el modelo de Mongoose (en lugar del array).
 21. **Fase 3 · paso 4:** probado con `curl`: GET, POST (201, id generado por MongoDB), PATCH parcial, DELETE, 400 y 404 ✅. En `mongosh`: BD `catalogo`, colección `productos`, documentos con `_id` ✅.
 22. **Fase 3 · paso 5:** `git diff` confirma **0 cambios en `frontend/`**, y la prueba completa en Chrome pasa ✅. La API no ha cambiado, así que el frontend no lo nota.
-23. **Cierre de la fase 3:** se apagan backend y MongoDB (puertos 3000 y 27017 cerrados), se vuelven a encender y **los datos se mantienen** ✅ (iPhone a 899 €, AirPods, MX Master sigue borrado). README completado (tres piezas y recorrido de una petición). Commit "fase 3" y push.
+23. **Cierre de la fase 3:** se apagan backend y MongoDB (puertos 3000 y 27017 cerrados), se vuelven a encender y **los datos se mantienen** ✅ (iPhone a 899 €, AirPods, MX Master sigue borrado). README completado (tres piezas y recorrido de una petición). Commit "fase 3" (`744ad23`) y push.
+24. **Limpieza:** se comprueba que ningún archivo de la app usa las skills de Nest y se borran. La cabecera de la web se actualiza a fase 3. La web sigue cargando los 4 productos ✅. Commit "limpieza final" y push.
 
 ---
 
