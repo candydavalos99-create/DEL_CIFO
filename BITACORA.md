@@ -7,26 +7,31 @@ Se actualiza al terminar cada paso. Las reglas generales del proyecto están en 
 
 ## Estado actual (resumen rápido)
 
-- **Fase:** 2 · Frontend + backend (NestJS) → **terminada**. Fase 1 → **cerrada**.
-- **Hecho:** CRUD completo (crear, listar, editar y borrar). El frontend usa `fetch` contra la API NestJS, con CORS habilitado solo para `http://localhost:8080`.
-- **Validación:** con DTOs + `class-validator` y `class-transformer` (instalados en `backend/`).
-- **Git:** commit "fase 2" subido a GitHub.
-- **Pendiente de decidir:** las skills que instaló Nest en `backend/` (`.claude/`, `.agents/`, `AGENTS.md`): ¿se borran? Por ahora siguen en disco, pero fuera de Git (`.gitignore`).
-- **Siguiente paso:** fase 3 (MongoDB). Empezaría comprobando `mongod` y `mongosh`, sin instalar nada sin permiso.
+- **Fase:** 3 · Frontend + backend + MongoDB → **terminada**. **Proyecto completo** (fases 1, 2 y 3).
+- **Hecho:** CRUD completo con los datos guardados en MongoDB (BD `catalogo`, colección `productos`). Los datos **se mantienen** al reiniciar todo.
+- **Validación:** DTOs + `class-validator` (petición) y esquema de Mongoose (base de datos).
+- **Git:** commit "fase 3" subido a GitHub.
+- **Pendiente de decidir:**
+  1. Las skills que instaló Nest en `backend/` (`.claude/`, `.agents/`, `AGENTS.md`): ¿se borran? Por ahora siguen en disco, pero fuera de Git.
+  2. La cabecera de la web todavía dice "Fase 2 · ... memoria del servidor". No se ha cambiado para demostrar que el frontend funciona sin tocarlo. ¿Se actualiza el texto?
 - **Repositorio en GitHub:** https://github.com/candydavalos99-create/DEL_CIFO (para subir cambios: `git push`)
-- **Cómo ver la web:** arrancar backend y frontend (ver abajo) y abrir http://localhost:8080
+- **Cómo ver la web:** arrancar las tres piezas (ver abajo) y abrir http://localhost:8080
 
-### Cómo arrancarlo (dos terminales)
+### Cómo arrancarlo (tres terminales, en este orden)
 
 ```bash
-# Terminal 1 · backend (API en el puerto 3000)
+# Terminal 1 · MongoDB (puerto 27017, datos en ~/mongodb/data)
+~/mongodb/bin/mongod --dbpath ~/mongodb/data --bind_ip 127.0.0.1 --port 27017
+
+# Terminal 2 · backend (API en el puerto 3000)
 cd /Users/alumne_mati1/proyectos/actividad01/backend && npm run start:dev
 
-# Terminal 2 · frontend (web en el puerto 8080)
+# Terminal 3 · frontend (web en el puerto 8080)
 cd /Users/alumne_mati1/proyectos/actividad01/frontend && python3 -m http.server 8080
 ```
 Después, abrir http://localhost:8080 en el navegador. Para parar cada uno: `Ctrl + C` en su terminal.
 Si se ve una versión antigua de la página: `Cmd + Shift + R`.
+Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:27017/catalogo"` y dentro `db.productos.find()`.
 
 ### Archivos actuales
 
@@ -43,9 +48,12 @@ Si se ve una versión antigua de la página: `Cmd + Shift + R`.
 | `backend/src/main.ts` | Punto de arranque: CORS, validación global (`ValidationPipe`) y puerto 3000 |
 | `backend/src/productos/productos.module.ts` | Módulo: agrupa todo lo de productos |
 | `backend/src/productos/productos.controller.ts` | Controlador (el "mostrador"): rutas `/productos` |
-| `backend/src/productos/productos.service.ts` | Servicio (el "almacén"): array en memoria y operaciones CRUD |
+| `backend/src/productos/productos.service.ts` | Servicio (el "encargado del almacén"): operaciones CRUD contra MongoDB con el modelo de Mongoose; inserta 3 ejemplos si la colección está vacía |
 | `backend/src/productos/dto/*.dto.ts` | DTOs: la "ficha de pedido" de crear y modificar, con las reglas de validación (`class-validator`) |
-| `backend/src/productos/producto.interface.ts` | Forma de un producto y categorías válidas |
+| `backend/src/productos/categorias.ts` | Categorías válidas (las usan los DTOs y el esquema) |
+| `backend/src/productos/schemas/producto.schema.ts` | Esquema de Mongoose: la "plantilla de ficha" de cada producto en MongoDB (`timestamps`, `id` en vez de `_id`) |
+| `backend/src/app.module.ts` | Conexión con MongoDB (`mongodb://127.0.0.1:27017/catalogo`) |
+| `~/mongodb/` (fuera del proyecto) | MongoDB 9.0.8 (`bin/`) y sus datos (`data/`) |
 
 ---
 
@@ -80,6 +88,17 @@ Si se ve una versión antigua de la página: `Cmd + Shift + R`.
 | 2026-11-20 | Mensajes de validación en español y recorte de espacios en los textos | Coherencia con el frontend |
 | 2026-11-20 | Las skills de Nest no se borran (falta respuesta), pero se excluyen de Git | No subir a GitHub archivos ajenos al proyecto sin borrar nada |
 | 2026-11-20 | Commit "fase 2" (incluye el cierre de la fase 1) y push a GitHub | Petición de la usuaria |
+| 2026-11-20 | MongoDB **no** con Homebrew: `/opt/homebrew` pertenece a otro usuario (ordenador del aula) y no se usa `sudo` | Sin permisos de administrador |
+| 2026-11-20 | MongoDB **9.0.8** descargado de `fastdl.mongodb.org` en `~/mongodb` (huella SHA-256 verificada); datos en `~/mongodb/data` | Versión estable más reciente para Mac con chip Apple; no necesita contraseña |
+| 2026-11-20 | `mongod` solo escucha en `127.0.0.1` y se arranca a mano (no arranca solo al encender el Mac) | Seguridad y control |
+| 2026-11-20 | `mongosh` 2.14.1 con `npx` (el paquete del servidor no lo incluye) | Sin instalar nada más; versión con más de dos semanas |
+| 2026-11-20 | `@nestjs/mongoose` 12.0.1 + `mongoose` 9.12.2 en `backend/` | Compatibles con Nest 12 |
+| 2026-11-20 | Avisos de `npm audit`: 0 en las dependencias de la aplicación; 5 en herramientas de desarrollo del generador (`tmp`, `undici`). No se usa `audit fix --force` | Podría romper el proyecto; no afectan a la aplicación |
+| 2026-11-20 | `producto.interface.ts` → `categorias.ts`; el tipo `Producto` pasa a ser el esquema de Mongoose | Evitar dos definiciones de Producto |
+| 2026-11-20 | La API responde `id` (texto) en vez de `_id`, y añade `createdAt` y `updatedAt` | La API no cambia para el frontend; las fechas las indica `CLAUDE.md` para la fase 3 |
+| 2026-11-20 | Un id con formato no válido (por ejemplo `99`) responde 404, no 500 | Mismo comportamiento que en la fase 2 |
+| 2026-11-20 | Si la colección está vacía al arrancar, se insertan los 3 productos de ejemplo | Continuidad con las fases 1 y 2 |
+| 2026-11-20 | Commit "fase 3" y push a GitHub | Incluido en el plan aprobado por la usuaria |
 
 ---
 
@@ -130,7 +149,15 @@ Si se ve una versión antigua de la página: `Cmd + Shift + R`.
 16. **Validación con DTOs:** `npm install class-validator class-transformer` en `backend/`. Reglas en los DTOs y `ValidationPipe` global en `main.ts`. Se elimina la validación a mano del servicio.
     - ⚠️ **Fallo encontrado y corregido:** el PATCH borraba los campos no enviados (`{"id":"4","precio":899}`). Al convertir el JSON en DTO, las casillas no enviadas quedan como `undefined` y machacaban los datos. Arreglo: el servicio copia solo los campos con valor.
     - Probado de nuevo con `curl` (201, 200, 400, 404 ✅; campo desconocido descartado ✅; espacios recortados ✅) y en Chrome ✅.
-17. **Git:** skills de Nest excluidas en `.gitignore`. Commit "fase 2" y `git push` a GitHub.
+17. **Git:** skills de Nest excluidas en `.gitignore`. Commit "fase 2" (`da88fcd`) y `git push` a GitHub.
+18. **Fase 3 · paso 1:** `mongod` y `mongosh` no estaban instalados. Homebrew sí (4.3+). La usuaria da permiso para instalar.
+    - ⚠️ `brew tap mongodb/brew` falló con *Permission denied*: Homebrew pertenece a otro usuario del ordenador.
+    - Alternativa: MongoDB 9.0.8 descargado en `~/mongodb` (huella verificada). `mongosh` con `npx`. `ping: 1` ✅.
+19. **Fase 3 · paso 2:** `npm install @nestjs/mongoose mongoose@9` en `backend/`. Conexión en `app.module.ts` con la BD `catalogo` ✅.
+20. **Fase 3 · paso 3:** esquema `Producto` (`schemas/producto.schema.ts`) y servicio reescrito con el modelo de Mongoose (en lugar del array).
+21. **Fase 3 · paso 4:** probado con `curl`: GET, POST (201, id generado por MongoDB), PATCH parcial, DELETE, 400 y 404 ✅. En `mongosh`: BD `catalogo`, colección `productos`, documentos con `_id` ✅.
+22. **Fase 3 · paso 5:** `git diff` confirma **0 cambios en `frontend/`**, y la prueba completa en Chrome pasa ✅. La API no ha cambiado, así que el frontend no lo nota.
+23. **Cierre de la fase 3:** se apagan backend y MongoDB (puertos 3000 y 27017 cerrados), se vuelven a encender y **los datos se mantienen** ✅ (iPhone a 899 €, AirPods, MX Master sigue borrado). README completado (tres piezas y recorrido de una petición). Commit "fase 3" y push.
 
 ---
 
@@ -149,3 +176,8 @@ Si se ve una versión antigua de la página: `Cmd + Shift + R`.
 - **`fetch`** = la forma en que el navegador hace peticiones HTTP a la API.
 - **CORS** = el guardia de seguridad del navegador. Una web en `localhost:8080` solo puede leer respuestas de `localhost:3000` si ese servidor dice expresamente "te autorizo" (cabecera `Access-Control-Allow-Origin`). Distinto puerto = distinto **origen**.
 - **Limitación de la fase 2:** los datos viven en la memoria del servidor. Sobreviven a recargar la página, pero se pierden al reiniciar el backend. La fase 3 (MongoDB) lo resolverá.
+- **Base de datos (MongoDB)** = el almacén con registro: guarda los datos en disco y se mantienen aunque se apague todo. Dentro hay **bases de datos** (`catalogo`), **colecciones** (`productos`, una estantería) y **documentos** (cada producto, con su `_id`).
+- **`mongod`** = el servidor de MongoDB (puerto 27017). **`mongosh`** = la consola para mirar dentro del almacén.
+- **Mongoose / ODM** = el traductor entre NestJS (objetos de JavaScript) y MongoDB (documentos). **Esquema** = la plantilla de ficha de cada producto en el almacén. **Modelo** = la herramienta para buscar, crear, modificar y borrar en una colección.
+- **Idea clave de la fase 3:** la API (rutas y JSON) **no ha cambiado**. Solo ha cambiado dónde guarda los datos el servicio. Por eso el frontend ha funcionado sin tocar ni una línea.
+- **Resultado de la fase 3:** los datos se mantienen al recargar la página, al reiniciar el backend y al reiniciar MongoDB.

@@ -1,64 +1,68 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import type { Producto } from './producto.interface.js';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { isValidObjectId } from 'mongoose';
+import type { Model } from 'mongoose';
+import { Producto } from './schemas/producto.schema.js';
+import type { ProductoDocument } from './schemas/producto.schema.js';
 import { CreateProductoDto } from './dto/create-producto.dto.js';
 import { UpdateProductoDto } from './dto/update-producto.dto.js';
 
-// Servicio: el "almacén" y su encargado. Guarda los datos y aplica las reglas.
+// Productos de ejemplo: solo se insertan si la colección está vacía (la primera vez)
+const EJEMPLOS = [
+  { nombre: 'MacBook Air 13"', marca: 'Apple', categoria: 'portatil', precio: 1199, stock: 5, descripcion: 'Portátil ligero con chip M3.' },
+  { nombre: 'MX Master 3S', marca: 'Logitech', categoria: 'periferico', precio: 109.99, stock: 12, descripcion: 'Ratón ergonómico inalámbrico.' },
+  { nombre: 'ThinkVision P27h', marca: 'Lenovo', categoria: 'monitor', precio: 349, stock: 0, descripcion: '' },
+];
+
+// Quita los campos "undefined" (los que no se enviaron en la petición)
+const sinVacios = (dto: object) => Object.fromEntries(Object.entries(dto).filter(([, valor]) => valor !== undefined));
+
+// Servicio: el "encargado del almacén". Fase 3: ya no guarda un array;
+// le pide y le entrega los datos a MongoDB a través del modelo de Mongoose.
 @Injectable()
-export class ProductosService {
-  // Fase 2: los datos viven en un array en la MEMORIA DEL SERVIDOR.
-  // Sobreviven a recargar la página, pero se pierden al reiniciar el servidor.
-  private productos: Producto[] = [
-    { id: '1', nombre: 'MacBook Air 13"', marca: 'Apple', categoria: 'portatil', precio: 1199, stock: 5, descripcion: 'Portátil ligero con chip M3.' },
-    { id: '2', nombre: 'MX Master 3S', marca: 'Logitech', categoria: 'periferico', precio: 109.99, stock: 12, descripcion: 'Ratón ergonómico inalámbrico.' },
-    { id: '3', nombre: 'ThinkVision P27h', marca: 'Lenovo', categoria: 'monitor', precio: 349, stock: 0, descripcion: '' },
-  ];
+export class ProductosService implements OnModuleInit {
+  // El "modelo" es el acceso a la colección productos de la BD catalogo
+  constructor(@InjectModel(Producto.name) private readonly productoModel: Model<Producto>) {}
 
-  // El id se genera "a mano" con un contador (en la fase 3 lo hará MongoDB)
-  private siguienteId = 4;
-
-  // ---- Listar todos ----
-  findAll(): Producto[] {
-    return this.productos;
+  // Al arrancar: si la colección está vacía, la rellena con los ejemplos
+  async onModuleInit() {
+    if ((await this.productoModel.countDocuments()) === 0) {
+      await this.productoModel.insertMany(EJEMPLOS);
+    }
   }
 
-  // ---- Buscar uno por id (404 si no existe) ----
-  findOne(id: string): Producto {
-    const producto = this.productos.find((p) => p.id === id);
+  // ---- Listar todos (en orden de creación) ----
+  findAll(): Promise<ProductoDocument[]> {
+    return this.productoModel.find().sort({ createdAt: 1 }).exec();
+  }
+
+  // ---- Buscar uno por id (404 si no existe o si el id no tiene formato de MongoDB) ----
+  async findOne(id: string): Promise<ProductoDocument> {
+    const producto = isValidObjectId(id) ? await this.productoModel.findById(id).exec() : null;
     if (!producto) throw new NotFoundException(`No existe ningún producto con id ${id}`);
     return producto;
   }
 
-  // ---- Crear (los datos ya llegan validados por el DTO) ----
-  create(dto: CreateProductoDto): Producto {
-    const nuevo: Producto = {
-      id: String(this.siguienteId++),
-      nombre: dto.nombre,
-      marca: dto.marca,
-      categoria: dto.categoria,
-      precio: dto.precio,
-      stock: dto.stock ?? 0,
-      descripcion: dto.descripcion ?? '',
-    };
-    this.productos.push(nuevo);
-    return nuevo;
+  // ---- Crear (MongoDB genera el id) ----
+  create(dto: CreateProductoDto): Promise<ProductoDocument> {
+    return this.productoModel.create(sinVacios(dto));
   }
 
-  // ---- Modificar (solo los campos enviados) ----
-  update(id: string, dto: UpdateProductoDto): Producto {
-    const actual = this.findOne(id);
-    // Solo copiamos los campos que traen valor: los que no se enviaron
-    // llegan como "undefined" y no deben borrar los datos que ya había.
-    const cambios = Object.fromEntries(Object.entries(dto).filter(([, valor]) => valor !== undefined));
-    const modificado: Producto = { ...actual, ...cambios, id: actual.id };
-    this.productos = this.productos.map((p) => (p.id === id ? modificado : p));
-    return modificado;
+  // ---- Modificar (solo los campos enviados) y devolver la versión nueva ----
+  async update(id: string, dto: UpdateProductoDto): Promise<ProductoDocument> {
+    const producto = isValidObjectId(id)
+      ? await this.productoModel
+          .findByIdAndUpdate(id, sinVacios(dto), { returnDocument: 'after', runValidators: true })
+          .exec()
+      : null;
+    if (!producto) throw new NotFoundException(`No existe ningún producto con id ${id}`);
+    return producto;
   }
 
   // ---- Borrar (devuelve el producto borrado) ----
-  remove(id: string): Producto {
-    const producto = this.findOne(id);
-    this.productos = this.productos.filter((p) => p.id !== id);
+  async remove(id: string): Promise<ProductoDocument> {
+    const producto = isValidObjectId(id) ? await this.productoModel.findByIdAndDelete(id).exec() : null;
+    if (!producto) throw new NotFoundException(`No existe ningún producto con id ${id}`);
     return producto;
   }
 }

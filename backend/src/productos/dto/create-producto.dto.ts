@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, MaxLength, Min } from 'class-validator';
-import { CATEGORIAS } from '../producto.interface.js';
+import { CATEGORIAS } from '../categorias.js';
 
 // Quita espacios al principio y al final de los textos recibidos
 const recortar = () => Transform(({ value }) => (typeof value === 'string' ? value.trim() : value));
