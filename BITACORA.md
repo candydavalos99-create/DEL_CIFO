@@ -12,8 +12,16 @@ Se actualiza al terminar cada paso. Las reglas generales del proyecto están en 
 - **Validación:** DTOs + `class-validator` (petición) y esquema de Mongoose (base de datos).
 - **Git:** commit "fase 3" subido a GitHub.
 - **Extra (fuera de las 3 fases):** escaparate para el cliente en `frontend/tienda.html`, con la misma API y solo lectura.
-- **Despliegue en Render:** archivos y guía preparados (`DESPLIEGUE.md`, `.github/workflows/deploy.yml`). ✅ **MongoDB Atlas listo** (Project 0 · Cluster0 M0 · Frankfurt). Credenciales en `~/mongodb/atlas-credenciales.txt` (privado, fuera del proyecto). **Falta:** commit y push, Render y los secretos de GitHub.
-- **Pendiente:** nada por decidir. Todo subido a GitHub (último commit: "limpieza final").
+- **Despliegue en Render (EN CURSO):**
+  - ✅ Archivos y guía (`DESPLIEGUE.md`, `.github/workflows/deploy.yml`).
+  - ✅ MongoDB Atlas (Project 0 · Cluster0 M0 · Frankfurt). Credenciales en `~/mongodb/atlas-credenciales.txt` (privado, fuera del proyecto).
+  - ✅ Código en GitHub (commit `b040ca0`). GitHub Actions en verde (aviso amarillo de Deploy Hooks: esperado).
+  - ✅ **Backend en Render:** https://catalogo-backend-6acw.onrender.com (lee de Atlas).
+  - ✅ **Web en Render:** https://catalogo-frontend-txzp.onrender.com (panel) · https://catalogo-frontend-txzp.onrender.com/tienda.html (tienda).
+  - ✅ CORS del backend: web publicada + `localhost:8080`.
+  - ✅ Secretos de GitHub `RENDER_DEPLOY_HOOK_BACKEND` y `RENDER_DEPLOY_HOOK_FRONTEND` (paso 5).
+  - ⏳ **Paso 6:** primer despliegue automático con GitHub Actions (push de la bitácora y `CONTINUAR.md`).
+  - Para retomar: ver `CONTINUAR.md` (prompt preparado).
 - **Repositorio en GitHub:** https://github.com/candydavalos99-create/DEL_CIFO (para subir cambios: `git push`)
 - **Cómo ver la web:** arrancar las tres piezas (ver abajo). Panel de gestión: http://localhost:8080 · Tienda para el cliente: http://localhost:8080/tienda.html
 - **Ver MongoDB:** doble clic en `~/mongodb/ver-catalogo-en-vivo.command` (se actualiza solo) o en `~/mongodb/ver-catalogo.command` (a mano, con `ver()`)
@@ -125,6 +133,10 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
 | 2026-11-20 | Se usa el proyecto existente **"Project 0"** (estaba vacío) en vez de crear uno nuevo | Cuenta recién creada, sin nada más |
 | 2026-11-20 | Usuario `catalogo_app` (readWriteAnyDatabase) con contraseña aleatoria guardada en `~/mongodb/atlas-credenciales.txt` (permisos 600); nunca se muestra en el chat | No exponer secretos |
 | 2026-11-20 | Acceso de red `0.0.0.0/0` | Render gratuito no tiene IP fija |
+| 2026-11-20 | Al token de GitHub se le añade el permiso **Workflows: Read and write** | GitHub no deja subir `.github/workflows/` sin ese permiso |
+| 2026-11-20 | La `MONGODB_URI` se pasa a Render copiándola al **portapapeles** (`pbcopy`) sin mostrarla; el portapapeles se vacía al terminar | No exponer secretos en el chat |
+| 2026-11-20 | Render: servicios creados a mano en el panel, guiando pantalla por pantalla (opción A) | Elección de la usuaria |
+| 2026-11-23 | `CORS_ORIGIN` incluye también `http://localhost:8080` | Poder probar la web local contra el backend publicado |
 
 ---
 
@@ -209,6 +221,26 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
     - Inicio de sesión con código de un solo uso, aprobado por la usuaria en el navegador.
     - Cluster0 (M0, AWS Frankfurt) creado; usuario `catalogo_app`; acceso `0.0.0.0/0`; dirección de conexión con `/catalogo` guardada en el archivo privado.
     - Probado: `ping: 1` ✅ y backend en modo producción contra Atlas → crea los 3 productos de ejemplo ✅.
+31. **Commit y push** `b040ca0` "tienda y preparación del despliegue en Render".
+    - ⚠️ El primer push fue rechazado: el token no tenía el permiso *Workflows*. La usuaria lo añade y el push funciona.
+    - GitHub Actions: check verde ✅ (desde aquí no se pudo consultar: límite de la API de GitHub sin sesión, compartido por la red del aula).
+32. **Render · backend (paso 2):** repositorio conectado, formulario del Web Service con los valores de la guía. `MONGODB_URI` copiada al portapapeles sin mostrarla. La usuaria llega a *Environment Variables*.
+33. **Pausa de fin de semana:** portapapeles vaciado. Se crea `CONTINUAR.md` con el prompt para el lunes.
+
+### 2026-11-23 · Sesión 3
+
+34. Se retoma con `CONTINUAR.md`. En Render no existía ningún servicio: el viernes no se llegó a pulsar *Deploy*. (La fila "DEL_CIFO · 3d ago" era el repositorio en la lista de selección, no un servicio.)
+35. **Render · backend (paso 2) ✅:** Web Service `catalogo-backend` creado con los valores de la guía. `MONGODB_URI` pegada desde el portapapeles (copiada dos veces; nunca mostrada en el chat) y portapapeles vaciado después.
+    - Dirección: **https://catalogo-backend-6acw.onrender.com**
+    - Comprobado: `GET /` → 200 "Hello World!" ✅ · `GET /productos` → los 3 productos de ejemplo de Atlas ✅ · CORS de momento solo `http://localhost:8080` ✅.
+36. **Render · web (paso 3) ✅:** Static Site `catalogo-frontend` (Build `cd frontend && sh generar-config.sh`, Publish `frontend`, `API_URL` = URL del backend, Auto-Deploy **Off**).
+    - Dirección: **https://catalogo-frontend-txzp.onrender.com**
+    - Comprobado: todos los archivos 200 ✅ · `config.js` publicado apunta al backend de Render ✅ · CORS aún bloqueaba (esperado).
+37. **CORS (paso 4) ✅:** `CORS_ORIGIN` = `https://catalogo-frontend-txzp.onrender.com,http://localhost:8080`.
+    - Comprobado: web publicada autorizada ✅ · local autorizada ✅ · otra web bloqueada ✅.
+    - En Chrome sin ventana: panel con 3 filas y tienda con 3 tarjetas, sin errores en la consola ✅ (captura revisada).
+38. **Deploy Hooks (paso 5) ✅:** la usuaria copia el Deploy Hook de cada servicio en Render y crea en GitHub los secretos `RENDER_DEPLOY_HOOK_BACKEND` y `RENDER_DEPLOY_HOOK_FRONTEND` (los valores nunca pasan por el chat). Se le pide comprobar Auto-Deploy **Off** en el backend.
+39. **Primer despliegue automático (paso 6):** commit de la bitácora y `CONTINUAR.md` + push → GitHub Actions.
 
 ---
 
