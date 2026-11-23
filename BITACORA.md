@@ -12,7 +12,7 @@ Se actualiza al terminar cada paso. Las reglas generales del proyecto están en 
 - **Validación:** DTOs + `class-validator` (petición) y esquema de Mongoose (base de datos).
 - **Git:** commit "fase 3" subido a GitHub.
 - **Extra (fuera de las 3 fases):** escaparate para el cliente en `frontend/tienda.html`, con la misma API y solo lectura.
-- **Despliegue en Render (EN CURSO):**
+- **Despliegue en Render ✅ (funcionando, con despliegue automático):**
   - ✅ Archivos y guía (`DESPLIEGUE.md`, `.github/workflows/deploy.yml`).
   - ✅ MongoDB Atlas (Project 0 · Cluster0 M0 · Frankfurt). Credenciales en `~/mongodb/atlas-credenciales.txt` (privado, fuera del proyecto).
   - ✅ Código en GitHub (commit `b040ca0`). GitHub Actions en verde (aviso amarillo de Deploy Hooks: esperado).
@@ -20,7 +20,9 @@ Se actualiza al terminar cada paso. Las reglas generales del proyecto están en 
   - ✅ **Web en Render:** https://catalogo-frontend-txzp.onrender.com (panel) · https://catalogo-frontend-txzp.onrender.com/tienda.html (tienda).
   - ✅ CORS del backend: web publicada + `localhost:8080`.
   - ✅ Secretos de GitHub `RENDER_DEPLOY_HOOK_BACKEND` y `RENDER_DEPLOY_HOOK_FRONTEND` (paso 5).
-  - ⏳ **Paso 6:** primer despliegue automático con GitHub Actions (push de la bitácora y `CONTINUAR.md`).
+  - ✅ Despliegue automático con GitHub Actions probado (commit `2d1ed02`).
+  - ✅ Paso 7: la usuaria prueba la web publicada y todo funciona. **Despliegue terminado.**
+  - Día a día: cambiar código → `git push` → GitHub Actions comprueba → Render publica.
   - Para retomar: ver `CONTINUAR.md` (prompt preparado).
 - **Repositorio en GitHub:** https://github.com/candydavalos99-create/DEL_CIFO (para subir cambios: `git push`)
 - **Cómo ver la web:** arrancar las tres piezas (ver abajo). Panel de gestión: http://localhost:8080 · Tienda para el cliente: http://localhost:8080/tienda.html
@@ -240,7 +242,10 @@ Ver los datos en la base de datos: `npx mongosh@2.14.1 "mongodb://127.0.0.1:2701
     - Comprobado: web publicada autorizada ✅ · local autorizada ✅ · otra web bloqueada ✅.
     - En Chrome sin ventana: panel con 3 filas y tienda con 3 tarjetas, sin errores en la consola ✅ (captura revisada).
 38. **Deploy Hooks (paso 5) ✅:** la usuaria copia el Deploy Hook de cada servicio en Render y crea en GitHub los secretos `RENDER_DEPLOY_HOOK_BACKEND` y `RENDER_DEPLOY_HOOK_FRONTEND` (los valores nunca pasan por el chat). Se le pide comprobar Auto-Deploy **Off** en el backend.
-39. **Primer despliegue automático (paso 6):** commit de la bitácora y `CONTINUAR.md` + push → GitHub Actions.
+39. **Primer despliegue automático (paso 6) ✅:** commit `2d1ed02` (bitácora y `CONTINUAR.md`) + push → GitHub Actions: los 3 trabajos en verde, los dos Deploy Hooks llamados y 0 avisos.
+    - Tras el redespliegue: backend 200 con 3 productos ✅ · web 200 ✅ · `config.js` correcto ✅ · CORS correcto ✅.
+    - (El primer script de seguimiento falló al leer la respuesta de GitHub porque `echo` convertía los `\n` del mensaje del commit; se corrigió leyendo la respuesta directamente.)
+40. **Comprobación final (paso 7) ✅:** la tienda daba "Not Found" a la usuaria. Desde aquí `/tienda.html` y `/tienda` respondían 200; solo fallan variantes como `/tienda.html/` o `/Tienda.html` (probablemente un carácter de más al copiar el enlace). Se le abre la página directamente y funciona. La usuaria confirma: **todo perfecto**.
 
 ---
 
